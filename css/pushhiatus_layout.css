@@ -1,0 +1,97 @@
+html
+{
+	width: 760px;
+}
+
+body
+{
+	font-family: museo-sans-1, museo-sans-2, 'Helvetica Neue', sans-serif;
+	background-color: #5F5F5F;
+	padding-left: 125px;
+	text-shadow:#666666 0 2px 3px;
+	font-weight: bold;
+	color:#222222;
+}
+
+h1
+{
+	font-size:50px;
+}
+
+.clear 
+{
+	width: 100%;
+	height: 1px;
+	margin: 0 0 -1px;
+	clear: both;
+}
+
+form span.required
+{
+	color: #E44749;
+	font-size: 25px;
+}
+
+form div.bucket
+{
+	width: 100%;
+}
+
+form div.bucket div.formPair
+{
+	padding-bottom: 15px;
+	float:left;
+}
+
+form div.bucket div.formPair label
+{
+	line-height: 30px;
+}
+
+form div.bucket div.formPair input.text
+{
+	height: 25px;
+	width: 350px;
+	border-radius: 5px;
+	border: 1px solid #3D3D3D;
+}
+
+form div.bucket div.formPair select
+{
+	height: 25px;
+	width: 200px;
+	border-radius: 5px;
+	border: 1px solid #3D3D3D;
+}
+
+form div.bucket div.error
+{
+	float: left;
+	font-size: 12px;
+	color: #E44749;
+	display: none;
+	height: 30px;
+	padding-top: 26px;
+}
+
+form div.bucket #errorDate,
+form div.bucket #errorMessage
+{
+	padding-left: 20px;
+	width: 170px;
+	padding-top: 20px;
+}
+
+form input.button
+{
+	color: #3D3D3D;
+	background-color: #FCE700;
+	background: -webkit-gradient(linear, left top, left bottom, from(#FCE700), to(#F6CC00));
+	background: -moz-linear-gradient(top,  #FCE700,  #F6CC000);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCE700', endColorstr='#F6CC00');
+	border-radius: 5px;
+	padding: 5px 20px;
+	border: 1px solid #F6CC00;
+	font-size: 15px;
+	margin-top: 10px;
+}
