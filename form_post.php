@@ -5,7 +5,8 @@
 	
 			$userid = $facebook->getUser();
 			$reason = $_POST['reason'];
-			$date = $_POST['date'];
+			$day = $_POST['day'];
+			$month = $_POST['month'];
 			$message = $_POST['message'];
 			
 			echo "UserID:". $userid ."<br />";
@@ -22,9 +23,9 @@
 
 			mysql_select_db("push_hiatus1", $connect);
 
-			$sql="INSERT INTO Data (userid, reason, date, message, enable)
+			$sql="INSERT INTO Data (userid, reason, month, day, message, enable)
 			VALUES
-			('$userid', '$_POST[reason]','$_POST[date]','$_POST[message]', '1')";
+			('$userid', '$_POST[reason]','$_POST[month]','$_POST[day]','$_POST[message]', '1')";
 
 			if (!mysql_query($sql,$connect))
  			{
