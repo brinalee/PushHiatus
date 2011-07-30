@@ -1,5 +1,7 @@
 <?php
 	require 'app_auth.php';
+	require 'getdate.php';
+
 ?>
 
 <!DOCTYPE html>

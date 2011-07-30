@@ -7,10 +7,10 @@
  			{
   				die('Could not connect: ' . mysql_error());
   			}
-
+			
 			mysql_select_db("push_hiatus1", $connect);
                         
-                        $sql = "SELECT month,day from Data where userId =".$userId;
+                        $sql = "SELECT month,day from Data where userId =".$user;
 			/*
                         $sql="INSERT INTO Data (userid, reason, date, message, enable)
 			VALUES
