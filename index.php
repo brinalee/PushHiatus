@@ -108,7 +108,16 @@ function validateForm()
 				function getDay(fbDate){
 					var arrDateTime = fbDate.split("T"); 
 					var arrDateCode = arrDateTime[0].split("-");
-					return arrDateCode[2];	
+					return arrDateCode[2];
+				}
+				
+				function getMonth(fbDate){
+					var arrDateTime = fbDate.split("T");
+					var arrDateCode = arrDateTime[0].split("-");
+					if (arrDateCode[1] < 10) {
+						return arrDateCode[1][1];
+					}
+					return arrDateCode[1]; 
 				}
 
         FB.getLoginStatus(function (response) {
@@ -119,9 +128,68 @@ function validateForm()
                 
                 
         		FB.api('/me/inbox' , function(response) {
+				var endMonth = "<?php echo $endMonth ?>";
+				var endDay = "<?php echo $endDay ?>";
+				var myId = "<?php echo $user ?>";
+				//alert(endMonth);
+				//alert(endDay);
+				var stopLoop = true;
+				var i=0;
+				
+				
+				var listOfIds = new Array();
+				var listId = 0;
+				
+				while(stopLoop) {
+					//if month is equal to or not.
+					//TODO: figure out the condition. start, end, current
+					//if end date passed already, turn off enable bit
+					if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
+						//how to get the ID and make sure
+						//make sure we check AGAINST alreadyRepliedtable!!!!!
+						//alert(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id);
+						if(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId) {
+							listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
+							listId++;
+						}
+					}
+					else {
+						stopLoop = false;
+					}
+					i++;
+				}
+				
+				var i=0;
+				/*
+				for (i=0; i<listOfIds.length; i++) {
+					alert(listOfIds[i]);
+				}
+				alert(listOfIds.length);
+				*/
+				var i=0;
+				for (i=0; i < listOfIds.length; i++) {
+					var body = "<?php echo $message ?>";;
+					var currentUser = "/"+listOfIds[i]+"/feed";
+					if (listOfIds[i] == 628309543) {
+						
+						FB.api(currentUser, 'post', {message:body}, function(response) {
+							if(!response || response.error) {
+								alert('Error occured');
+							} else {
+								alert('Post ID: ' + response.id);
+							}
+						});
+					}
+					//alert(listOfIds[i++]);
+				}
+				
+				
+				 /*
+				 while(getDay(response.data[].updated_time) < endDay)
   				 var day = getDay(response.data[0].updated_time);
   				 alert(day);
   				 //alert(response.data[0].from.name);
+				 */
 				});
 				
 				/*

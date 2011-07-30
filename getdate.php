@@ -10,24 +10,30 @@
 			
 			mysql_select_db("push_hiatus1", $connect);
                         
-                        $sql = "SELECT month,day from Data where userId =".$user;
+                        $sql = "SELECT month,day,message from Data where enable = 1 and userId =".$user;
+			$result = mysql_query($sql);
+			
 			/*
                         $sql="INSERT INTO Data (userid, reason, date, message, enable)
 			VALUES
 			('$userid', '$_POST[reason]','$_POST[date]','$_POST[message]', '1')";
-			*/
+			
 			
 			if (!mysql_query($sql,$connect))
  			{
   				die('Error: ' . mysql_error());
   			}
-			
-			
-			while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			*/
+			$endDay = "";
+			$endMonth = "";
+			$message = "";
+			while($row = mysql_fetch_array($result))
 			{
-				echo "Month :{$row['month']} <br>".
-				"Day : {$row['day']} <br>"; 
-			}	 
+				$endMonth =  $row['month'];
+				$endDay =  $row['day'];
+				$message = $row['message'];
+			}
+			
 			mysql_close($connect);
 			
 			$result = $facebook->api('/me/feed');
