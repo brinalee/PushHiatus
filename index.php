@@ -85,6 +85,29 @@ function validateForm()
             cookie: true, 
             xfbml: true, 
             status: true });
+            
+				
+				/* Parse time format*/
+				function formatFBTime(fbDate){
+					var arrDateTime = fbDate.split("T"); 
+					var arrDateCode = arrDateTime[0].split("-");
+					var strTimeCode = arrDateTime[1].substring(0,  arrDateTime[1].indexOf("+")); 
+					var arrTimeCode = strTimeCode.split(":"); 
+					var valid_date = new Date()
+					valid_date.setUTCFullYear(arrDateCode[0]);
+					valid_date.setUTCMonth(arrDateCode[1] - 1);
+					valid_date.setUTCDate(arrDateCode[2]);
+					valid_date.setUTCHours(arrTimeCode[0]);
+					valid_date.setUTCMinutes(arrTimeCode[1]);
+					valid_date.setUTCSeconds(arrTimeCode[2]);
+					return valid_date;	
+				}
+				
+				function getDay(fbDate){
+					var arrDateTime = fbDate.split("T"); 
+					var arrDateCode = arrDateTime[0].split("-");
+					return arrDateCode[2];	
+				}
 
         FB.getLoginStatus(function (response) {
             if (response.session) {
@@ -92,35 +115,27 @@ function validateForm()
                 //$('#AccessToken').val(response.session.access_token);
                 var access_token = response.session.access_token;
                 
-                /*
+                
         		FB.api('/me/inbox' , function(response) {
-  				alert(response.data[0].unread_count);
+  				 var day = getDay(response.data[0].updated_time);
+  				 alert(day);
+  				 //alert(response.data[0].from.name);
 				});
-				*/
 				
-				//var body = 'HELLO';				
 				/*
-				FB.api('/628309543/feed', 'post', {message:body}, function(response) {
-					if(!response || response.error) {
-						alert('Error occured');
-					} else {
-						alert('Post ID: ' + response.id);
-					}
-				});
-				*/
-
 				FB.api(
 					{
 						method: 'fql.query',
-						//query: 'SELECT unread_count FROM mailbox_folder WHERE folder_id = 0'
-						query: 'SELECT message_id FROM unified_message WHERE unread = 1'
+						//query: 'SELECT timestamp FROM unified_thread WHERE unread=1'
+						query: 'SELECT created_time FROM message'
+						//query: 'SELECT unread_count FROM unified_thread_count WHERE folder="inbox"'
 					},
 					function (response) {
 						
-						alert(response.message_id);
+						alert(response.created_time);
 					}
 					);
-				
+				*/
 				// H1
 				var phTitle = document.createElement('h1');
 				phTitle.innerHTML = "PushHiatus";
@@ -206,14 +221,23 @@ function validateForm()
 				dateLabel.appendChild(spanReq2);
 				//</br> after label
 				
-				var dateInput = document.createElement('input');
-				dateInput.setAttribute("id","date");
-				dateInput.setAttribute("class","text");
-				dateInput.setAttribute("type","text");
-				dateInput.setAttribute("name","date");
-				formPair2.appendChild(dateInput);
+				var monthInput = document.createElement('input');
+				monthInput.setAttribute("id","month");
+				monthInput.setAttribute("class","text");
+				monthInput.setAttribute("type","text");
+				monthInput.setAttribute("name","month");
+				formPair2.appendChild(monthInput);
 				var br4 = document.createElement('br');
 				formPair2.appendChild(br4);
+				
+				var dayInput = document.createElement('input');
+				dayInput.setAttribute("id","day");
+				dayInput.setAttribute("class","text");
+				dayInput.setAttribute("type","text");
+				dayInput.setAttribute("name","day");
+				formPair2.appendChild(dayInput);
+				var br7 = document.createElement('br');
+				formPair2.appendChild(br7);
 
 				
 				var dateErrorDiv = document.createElement('div');
@@ -283,7 +307,11 @@ function validateForm()
         });
 
     });
-</script> 			
+</script> 	
+
+<?php
+
+?>
 	</body>
 
 </html>
