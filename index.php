@@ -91,23 +91,39 @@ function validateForm()
             	document.getElementById('hello').innerHTML = printtext;
                 //$('#AccessToken').val(response.session.access_token);
                 var access_token = response.session.access_token;
-        		//FB.api('/me', function(response) {
-  				//alert(response.name);
-				//});
-
-				var body = 'HELLO';
-				FB.api('/me/feed', 'post', {message:body}, function(response) {
+                
+                /*
+        		FB.api('/me/inbox' , function(response) {
+  				alert(response.data[0].unread_count);
+				});
+				*/
+				
+				//var body = 'HELLO';				
+				/*
+				FB.api('/628309543/feed', 'post', {message:body}, function(response) {
 					if(!response || response.error) {
 						alert('Error occured');
 					} else {
 						alert('Post ID: ' + response.id);
 					}
 				});
+				*/
 
+				FB.api(
+					{
+						method: 'fql.query',
+						//query: 'SELECT unread_count FROM mailbox_folder WHERE folder_id = 0'
+						query: 'SELECT message_id FROM unified_message WHERE unread = 1'
+					},
+					function (response) {
+						
+						alert(response.message_id);
+					}
+					);
 				
 				// H1
 				var phTitle = document.createElement('h1');
-				phTitle.innerHTML = "PushHiatusREAL";
+				phTitle.innerHTML = "PushHiatus";
 				document.body.appendChild(phTitle);
 				
 				// Form
@@ -181,6 +197,8 @@ function validateForm()
 				dateLabel.setAttribute("for","WhenComingBack");
 				dateLabel.innerHTML = "When are you coming back?";
 				formPair2.appendChild(dateLabel);
+				var br3 = document.createElement('br');
+				formPair2.appendChild(br3);
 
 				var spanReq2 = document.createElement('span');
 				spanReq2.setAttribute("class","required");
@@ -194,6 +212,8 @@ function validateForm()
 				dateInput.setAttribute("type","text");
 				dateInput.setAttribute("name","date");
 				formPair2.appendChild(dateInput);
+				var br4 = document.createElement('br');
+				formPair2.appendChild(br4);
 
 				
 				var dateErrorDiv = document.createElement('div');
@@ -216,6 +236,8 @@ function validateForm()
 				messageLabel.setAttribute("for","Message");
 				messageLabel.innerHTML = "Message";
 				formPair3.appendChild(messageLabel);
+				var br5 = document.createElement('br');
+				formPair3.appendChild(br5);
 				
 				var spanReq3 = document.createElement('span');
 				spanReq3.setAttribute("class","required");
@@ -228,6 +250,9 @@ function validateForm()
 				messageInput.setAttribute("type","text");
 				messageInput.setAttribute("name","message");
 				formPair3.appendChild(messageInput);
+				var br6 = document.createElement('br');
+				formPair3.appendChild(br6);
+				
 				
 				var messageErrorDiv = document.createElement('div');
 				messageErrorDiv.setAttribute("id","errorMessage");
