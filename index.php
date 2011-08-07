@@ -12,6 +12,65 @@
 		<link href="css/pushhiatus_layout.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="javascript/main.js"></script>
 		<script type="text/javascript" src="javascript/runEachUser.js"></script>
+<!--
+<script type="text/javascript">
+		
+function validateForm()
+{
+	var reason = document.forms["mainForm"]["reason"].value;
+	var date = document.forms["mainForm"]["date"].value;
+	var message = document.forms["mainForm"]["message"].value;
+	var flag = true;
+	
+	if ( reason == null || reason == "Please select a reason..." )
+	{
+		document.getElementById("reason").style.borderColor="red";
+		document.getElementById("errorReason").style.display = "block";
+		flag = false;
+	}
+	else
+	{
+		document.getElementById("reason").style.borderColor= "#000";
+		document.getElementById("errorReason").style.display = "none";
+	}
+	
+	if ( date == null || date == "" )
+  	{
+  		document.getElementById("date").style.borderColor="red";
+  		document.getElementById("errorDate").style.display = "block";
+  		flag = false;
+  	}
+  	else
+  	{		
+  		document.getElementById("date").style.borderColor= "#000";
+		document.getElementById("errorDate").style.display = "none";
+  	}
+  	
+  	if ( message == null || message == "" )
+  	{
+  		document.getElementById("message").style.borderColor="red";
+  		document.getElementById("errorMessage").style.display = "block";
+		flag = false;
+  	}
+  	else
+  	{		
+  		document.getElementById("message").style.borderColor= "#000";
+		document.getElementById("errorMessage").style.display = "none";
+  	}
+
+
+	if(flag)
+	{
+  		return true;
+  	}
+  	else
+  	{
+  		return false;
+  	}
+  	return true;
+}
+</script>
+-->
 	</head>
 	<body>
 		
@@ -24,9 +83,6 @@
 <script type="text/javascript">
 	
 
-
-	var printtext= "<p>permissions granted</p>";
-	var printtext2= "<p>no permissions</p>";
     $(document).ready(function () {
 
         FB.init({ 
@@ -38,7 +94,6 @@
 
         FB.getLoginStatus(function (response) {
             if (response.session) {
-            	document.getElementById('hello').innerHTML = printtext;
                 //$('#AccessToken').val(response.session.access_token);
                 var access_token = response.session.access_token;
 				
@@ -149,24 +204,41 @@
 				dateLabel.appendChild(spanReq2);
 				//</br> after label
 				
+				var wrapperDate = document.createElement('div');
+				wrapperDate.setAttribute("class","wrapperDate");
+				
 				var monthInput = document.createElement('input');
 				monthInput.setAttribute("id","month");
-				monthInput.setAttribute("class","text");
+				monthInput.setAttribute("class","text date");
 				monthInput.setAttribute("type","text");
 				monthInput.setAttribute("name","month");
+				monthInput.setAttribute("placeholder","m");
 				formPair2.appendChild(monthInput);
 				var br4 = document.createElement('br');
-				formPair2.appendChild(br4);
+				wrapperDate.appendChild(br4);
 				
 				var dayInput = document.createElement('input');
 				dayInput.setAttribute("id","day");
-				dayInput.setAttribute("class","text");
+				dayInput.setAttribute("class","text date");
 				dayInput.setAttribute("type","text");
 				dayInput.setAttribute("name","day");
+				dayInput.setAttribute("placeholder","d");
 				formPair2.appendChild(dayInput);
 				var br7 = document.createElement('br');
-				formPair2.appendChild(br7);
-
+				wrapperDate.appendChild(br7);
+				
+				//To Fix. Not correct.
+				var yearInput = document.createElement('input');
+				yearInput.setAttribute("id","year");
+				yearInput.setAttribute("class","text date");
+				yearInput.setAttribute("type","text");
+				yearInput.setAttribute("name","year");
+				yearInput.setAttribute("placeholder","y");
+				formPair2.appendChild(yearInput);
+				var br8 = document.createElement('br');
+				wrapperDate.appendChild(br8);
+				
+				formPair2.appendChild(wrapperDate);
 				
 				var dateErrorDiv = document.createElement('div');
 				dateErrorDiv.setAttribute("id","errorDate");
@@ -186,7 +258,7 @@
 				
 				var messageLabel = document.createElement('label');
 				messageLabel.setAttribute("for","Message");
-				messageLabel.innerHTML = "Message";
+				messageLabel.innerHTML = "Auto-Reply Message";
 				formPair3.appendChild(messageLabel);
 				var br5 = document.createElement('br');
 				formPair3.appendChild(br5);
