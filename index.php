@@ -208,17 +208,33 @@ function validateForm()
 				
 				alert(listOfIds.length);
 				*/
+
+				alert(listOfIds.length);				
+				//filtering the duplicates if any
+				var nonDupListIds = new Array();
+				var sorted_arr = listOfIds.sort();
 				var i=0;
-				for (i=0; i < listOfIds.length; i++) {
+				var cur=0;
+				for (i=0; i< sorted_arr.length-1; i++) {
+					if ((sorted_arr[i] != sorted_arr[i+1]) || (sorted_arr[i] == sorted_arr[i+1] && i+1==sorted_arr.length-1)) {
+						nonDupListIds[cur] = sorted_arr[i];
+						cur++;
+					}
+				}
+				alert(nonDupListIds.length);
+				
+				//posting to walls and saving into db
+				var i=0;
+				for (i=0; i < nonDupListIds.length; i++) {
 					var body = "<?php echo $message ?>";
-					var currentFriend = "/"+listOfIds[i]+"/feed";
+					var currentFriend = "/"+nonDupListIds[i]+"/feed";
 					//var currentId = listOfIds[i];
 					FB.api(currentFriend, 'post', {message:body}, function(response) {
 						if(!response || response.error) {
 							alert('Error occured');
 						}
 					});
-					insertIntoAlreadyRepliedTable(listOfIds[i]);
+					insertIntoAlreadyRepliedTable(nonDupListIds[i]);
 				}
 				
 				
