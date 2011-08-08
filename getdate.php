@@ -13,6 +13,17 @@
                         $sql = "SELECT month,day,message from Data where enable = 1 and userId =".$user;
 			$result = mysql_query($sql);
 			
+			/*
+                        $sql="INSERT INTO Data (userid, reason, date, message, enable)
+			VALUES
+			('$userid', '$_POST[reason]','$_POST[date]','$_POST[message]', '1')";
+			
+			
+			if (!mysql_query($sql,$connect))
+ 			{
+  				die('Error: ' . mysql_error());
+  			}
+			*/
 			$endDay = "";
 			$endMonth = "";
 			$message = "";
@@ -24,6 +35,7 @@
 			}
 			
 			mysql_close($connect);
+			
 			
 			
 		?>

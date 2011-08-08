@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-    <?php
-	require 'app_auth.php';
-    ?>
     
     <html xmlns:fb="http://www.facebook.com/2008/fbml">
     <script type="text/javascript" src="javascript/main.js"></script>
@@ -81,7 +78,13 @@
         
 	function runEachUser(userId,endM,endD,message) {
 		var currentUser = "/"+userId+"/inbox";
+		alert(currentUser);
 		FB.api(currentUser , function(response) {
+		    if( !response || response.error )
+		    {
+			alert("error");
+		    }
+		    alert(response.data.length);
                     var endMonth = endM;
                     var endDay = endD;
                     var myId = userId;
@@ -94,7 +97,6 @@
                             //if month is equal to or not.
                             //TODO: figure out the condition. start, end, current
                             //if end date passed already, turn off enable bit
-                            alert(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth);
                             if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
                                     //how to get the ID and make sure
                                     //make sure we check AGAINST alreadyRepliedtable!!!!!
@@ -107,7 +109,7 @@
                                             else {					
                                                     listOfIds[listId] = response.data[i].to.data[j+1].id;								
                                             }
-					    alert("here"+listOfIds[listId]);
+					    //alert("here"+listOfIds[listId]);
                                             listId++;
                                     }
                                     /*
@@ -194,16 +196,6 @@
         $endDay =  $row['day'];
         $endYear = $row['year'];
         $message = $row['message'];
-	
-	/*
-        echo "UserId: ".$userId;
-	echo "<br>";
-	echo "End Month: ".$endMonth;
-	echo "<br>";
-	echo "End Day: ".$endDay;
-	echo "<br>";
-	echo $endYear;
-	*/
 	
         // Check the enable flag
         if( $currentDate['year'] == $endYear )

@@ -82,7 +82,7 @@ form div.bucket div.error
 	float: left;
 	font-size: 12px;
 	color: #E44749;
-	display: none;
+	display: block;
 	height: 30px;
 	padding-top: 26px;
 }

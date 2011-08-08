@@ -1,87 +1,18 @@
-<?php
-	require 'app_auth.php';
-	require 'getdate.php';
-
-?>
-
 <!DOCTYPE html>
 <html xmlns:fb="http://www.facebook.com/2008/fbml">
 	<head>
 		<title>Push Hiatus</title>
 		<link rel="shortcut icon" href="images/favicon.ico" >
 		<link href="css/pushhiatus_layout.css" rel="stylesheet" type="text/css" />
-		<script type="text/javascript" src="javascript/main.js"></script>
-		<script type="text/javascript" src="javascript/runEachUser.js"></script>
-<!--
-<script type="text/javascript">
-		
-function validateForm()
-{
-	var reason = document.forms["mainForm"]["reason"].value;
-	var date = document.forms["mainForm"]["date"].value;
-	var message = document.forms["mainForm"]["message"].value;
-	var flag = true;
-	
-	if ( reason == null || reason == "Please select a reason..." )
-	{
-		document.getElementById("reason").style.borderColor="red";
-		document.getElementById("errorReason").style.display = "block";
-		flag = false;
-	}
-	else
-	{
-		document.getElementById("reason").style.borderColor= "#000";
-		document.getElementById("errorReason").style.display = "none";
-	}
-	
-	if ( date == null || date == "" )
-  	{
-  		document.getElementById("date").style.borderColor="red";
-  		document.getElementById("errorDate").style.display = "block";
-  		flag = false;
-  	}
-  	else
-  	{		
-  		document.getElementById("date").style.borderColor= "#000";
-		document.getElementById("errorDate").style.display = "none";
-  	}
-  	
-  	if ( message == null || message == "" )
-  	{
-  		document.getElementById("message").style.borderColor="red";
-  		document.getElementById("errorMessage").style.display = "block";
-		flag = false;
-  	}
-  	else
-  	{		
-  		document.getElementById("message").style.borderColor= "#000";
-		document.getElementById("errorMessage").style.display = "none";
-  	}
 
-
-	if(flag)
-	{
-  		return true;
-  	}
-  	else
-  	{
-  		return false;
-  	}
-  	return true;
-}
-</script>
--->
 	</head>
 	<body>
-		
-
 		
 <div id="fb-root"></div>
 <div id="hello"></div>
 <script src="https://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	
 
     $(document).ready(function () {
 
@@ -96,29 +27,9 @@ function validateForm()
             if (response.session) {
                 //$('#AccessToken').val(response.session.access_token);
                 var access_token = response.session.access_token;
-				
-				 /*
-				 while(getDay(response.data[].updated_time) < endDay)
-  				 var day = getDay(response.data[0].updated_time);
-  				 alert(day);
-  				 //alert(response.data[0].from.name);
-				 */
-
-				
-				/*
-				FB.api(
-					{
-						method: 'fql.query',
-						//query: 'SELECT timestamp FROM unified_thread WHERE unread=1'
-						query: 'SELECT created_time FROM message'
-						//query: 'SELECT unread_count FROM unified_thread_count WHERE folder="inbox"'
-					},
-					function (response) {
-						
-						alert(response.created_time);
-					}
-					);
-				*/
+                
+                
+        
 				// H1
 				var phTitle = document.createElement('h1');
 				phTitle.innerHTML = "PushHiatus";
@@ -239,6 +150,7 @@ function validateForm()
 				wrapperDate.appendChild(br8);
 				
 				formPair2.appendChild(wrapperDate);
+
 				
 				var dateErrorDiv = document.createElement('div');
 				dateErrorDiv.setAttribute("id","errorDate");
@@ -258,7 +170,7 @@ function validateForm()
 				
 				var messageLabel = document.createElement('label');
 				messageLabel.setAttribute("for","Message");
-				messageLabel.innerHTML = "Auto-Reply Message";
+				messageLabel.innerHTML = "Message";
 				formPair3.appendChild(messageLabel);
 				var br5 = document.createElement('br');
 				formPair3.appendChild(br5);
@@ -299,9 +211,9 @@ function validateForm()
 				submitButton.setAttribute("value","Submit");
 				mainForm.appendChild(submitButton);
 				
+	
 				
             } else {
-            	document.getElementById('hello').innerHTML = printtext2;
             	document.getElementById('hello').innerHTML = "<a href=\"https://www.facebook.com/dialog/oauth?client_id=229062487116940&redirect_uri=http://www.appybyte.com/pushhiatus&scope=read_mailbox,read_stream,publish_stream,offline_access&response_type=token&response_type=token\" target=\"_top\">Login with Facebook</a>";
             }
         });
