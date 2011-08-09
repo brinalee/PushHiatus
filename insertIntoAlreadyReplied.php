@@ -4,7 +4,7 @@ require 'app_auth.php';
 
 $friendId=$_GET["friendId"];
 //$userId=$_GET["userId"];
-$userid = $facebook->getUser();
+$userId = $_GET["userId"];
 
 $connect = mysql_connect("brinaleecom.ipagemysql.com", "brinakoko", "kingkoko");
 if (!$connect)
@@ -16,7 +16,7 @@ mysql_select_db("push_hiatus1", $connect);
 
 $sql="INSERT INTO AlreadyReplied (friendid, userid)
 VALUES
-('$friendId', '$user')";
+('$friendId', '$userId')";
 
 $result = mysql_query($sql);
 

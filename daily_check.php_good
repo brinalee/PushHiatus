@@ -20,7 +20,7 @@
             
 
 
-	function insertIntoAlreadyRepliedTable(friendId,userId) {
+	function insertIntoAlreadyRepliedTable(friendId) {
 		if (window.XMLHttpRequest)
 		{// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
@@ -38,7 +38,7 @@
 			}
 		}
 		//alert(friendId);
-		xmlhttp.open("GET","insertIntoAlreadyReplied.php?friendId="+friendId+"&userId="+userId,true);
+		xmlhttp.open("GET","insertIntoAlreadyReplied.php?friendId="+friendId,true);
 		xmlhttp.send();
 	}
 
@@ -84,7 +84,7 @@
 		    {
 			alert("error");
 		    }
-		    //alert(response.data.length);
+		    alert(response.data.length);
                     var endMonth = endM;
                     var endDay = endD;
                     var myId = userId;
@@ -97,7 +97,6 @@
                             //if month is equal to or not.
                             //TODO: figure out the condition. start, end, current
                             //if end date passed already, turn off enable bit
-			    //alert(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth);
                             if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
                                     //how to get the ID and make sure
                                     //make sure we check AGAINST alreadyRepliedtable!!!!!
@@ -113,18 +112,11 @@
 					    //alert("here"+listOfIds[listId]);
                                             listId++;
                                     }
-				    //condition for the group
-				    
-				    else {
-					alert(response.data[i].from.id);
-                                        if(response.data[i].from.id == myId) {    
-					    if(response.data[i].comments != undefined && response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId) {
-						
-						listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
-						listId++;
-					    }
-                                        }					
-				    }
+                                    /*
+                                    if(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId) {
+                                            listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
+                                            listId++;
+                                    }*/
                             }
                             else {
                                     stopLoop = false;
@@ -144,28 +136,15 @@
     			
                     //filtering the duplicates if any
                     var nonDupListIds = new Array();
-		    var cur=0;
-		    if (listOfIds.length > 1) {
-			var sorted_arr = listOfIds.sort();
-			var i=0;
-			for (i=0; i< sorted_arr.length-1; i++) {
-				if ((sorted_arr[i] != sorted_arr[i+1])) {
-					nonDupListIds[cur] = sorted_arr[i];
-					cur++;
-					if(i+1 == sorted_arr.length-1) {
-					    nonDupListIds[cur] = sorted_arr[i];
-					    cur++;
-					}
-				}
-				else if (sorted_arr[i] == sorted_arr[i+1] && i+1==sorted_arr.length-1) {
-				    nonDupListIds[cur] = sorted_arr[i];
-				    cur++;				
-				}
-			}
-		    }
-		    else {
-			nonDupListIds[cur] = listOfIds[cur];
-		    }
+                    var sorted_arr = listOfIds.sort();
+                    var i=0;
+                    var cur=0;
+                    for (i=0; i< sorted_arr.length-1; i++) {
+                            if ((sorted_arr[i] != sorted_arr[i+1]) || (sorted_arr[i] == sorted_arr[i+1] && i+1==sorted_arr.length-1)) {
+                                    nonDupListIds[cur] = sorted_arr[i];
+                                    cur++;
+                            }
+                    }
                     alert(nonDupListIds.length);
                     
                     //posting to walls and saving into db
@@ -179,7 +158,7 @@
                                             alert('Error occured');
                                     }
                             });
-                            insertIntoAlreadyRepliedTable(nonDupListIds[i],userId);
+                            insertIntoAlreadyRepliedTable(nonDupListIds[i]);
                     }
 		});        
 	}
@@ -209,7 +188,7 @@
     $endDay = "";
     $endYear = "";
     $message = "";
-
+    
     while($row = mysql_fetch_array($result))
     {
         $userId = $row['userid'];
@@ -217,6 +196,7 @@
         $endDay =  $row['day'];
         $endYear = $row['year'];
         $message = $row['message'];
+	
         // Check the enable flag
         if( $currentDate['year'] == $endYear )
         {
@@ -225,16 +205,6 @@
                 if( $currentDate['mday'] <= $endDay )
                 {
 		    echo $userId;
-		    
-		    //getting a list of already replied
-	            $sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
-		    $result1 = mysql_query($sql);
-		    $listOfAlreadyReplied = array();
-		    while ($row = mysql_fetch_array($result)) {
-			array_push($listOfAlreadyReplied, $row['friendid']);
-			echo $row['friendid'];
-		    }
-		    
 		    //TODO: need to put back -1
 		    $currentDay = $currentDate['mday'];
 		    $currentMonth = $currentDate['mon'];

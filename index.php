@@ -26,9 +26,11 @@
         FB.getLoginStatus(function (response) {
             if (response.session) {
                 //$('#AccessToken').val(response.session.access_token);
-                var access_token = response.session.access_token;
-                
-                
+                //var access_token = response.session.access_token;
+
+		var uid = response.session.uid;
+
+
         
 				// H1
 				var phTitle = document.createElement('h1');
@@ -40,8 +42,18 @@
 				mainForm.setAttribute( "name", "mainForm");
 				mainForm.setAttribute( "action", "form_post.php");
 				mainForm.setAttribute( "method", "post");
-				mainForm.setAttribute( "onsubmit", "return validateForm();");
+				mainForm.setAttribute( "onsubmit", "return;");
 				document.body.appendChild(mainForm);
+				
+				//User id
+				var idSelect = document.createElement('select');
+				idSelect.style.display="none";
+				idSelect.setAttribute("id","userid");
+				idSelect.setAttribute("name","userid");
+				var option6 = document.createElement('option');
+				option6.innerHTML = uid;
+				idSelect.appendChild(option6);
+				mainForm.appendChild(idSelect);
 				
 				// First bucket
 				var bucket = document.createElement('div');
