@@ -36,7 +36,6 @@
 				alert("success");
 			}
 		}
-		//alert(friendId);
 		xmlhttp.open("GET","insertIntoAlreadyReplied.php?friendId="+friendId+"&userId="+userId,true);
 		xmlhttp.send();
 	}
@@ -106,33 +105,23 @@
                     var listOfIds = new Array();
                     var listId = 0;
                     while(stopLoop) {
-			    alert("length"+listOfAlreadyReplied.length);
+			    //alert("length"+listOfAlreadyReplied.length);
 			    //alert("item"+listOfAlreadyReplied[0]);
-                            //if month is equal to or not.
-                            //TODO: figure out the condition. start, end, current
                             //if end date passed already, turn off enable bit
 			    //alert(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth);
                             if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
-                                    //how to get the ID and make sure
-                                    //make sure we check AGAINST alreadyRepliedtable!!!!!
                                     //alert(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id);
                                     if (response.data[i].to.data.length == 2) {
                                             var j = 0;                                        
 					    if(response.data[i].to.data[j].id != myId && checkAlreadyReplied(response.data[i].to.data[j].id) == false) {
-				            //if(response.data[i].to.data[j].id != myId) {
-		                                    listOfIds[listId] = response.data[i].to.data[j].id;
-						    listId++;
+						listOfIds[listId] = response.data[i].to.data[j].id;
+						listId++;
                                             }
-                                            else {
-							if(checkAlreadyReplied(response.data[i].to.data[j+1].id) == false) {
-								listOfIds[listId] = response.data[i].to.data[j+1].id;
-								listId++;
-							}
+                                            else if(checkAlreadyReplied(response.data[i].to.data[j+1].id) == false) {
+						listOfIds[listId] = response.data[i].to.data[j+1].id;
+						listId++;
                                             }
-
                                     }
-				    //condition for the group
-				    
 				    else {
 					//alert("group"+response.data[i].from.id);
 					//TODO: need more testing
@@ -152,14 +141,11 @@
                             i++;
                     }
                     
-                    
-                    var i=0;
                     /*
+                    var i=0;
                     for (i=0; i<listOfIds.length; i++) {
                             alert(listOfIds[i]);
-                    }
-                    
-		    
+                    }    
                     alert(listOfIds.length);
                     */
     			
@@ -187,14 +173,14 @@
 		    else if (listOfIds.length == 1) {
 			nonDupListIds[cur] = listOfIds[cur];
 		    }
-                    alert(nonDupListIds.length);
+                    //alert(nonDupListIds.length);
                     
                     //posting to walls and saving into db
                     var i=0;
                     for (i=0; i < nonDupListIds.length; i++) {
                             var body = message;
                             var currentFriend = "/"+nonDupListIds[i]+"/feed";
-			    alert(currentFriend);
+
                             //var currentId = listOfIds[i];
                             FB.api(currentFriend, 'post', {message:body}, function(response) {
                                     if(!response || response.error) {
@@ -214,6 +200,21 @@
     
 <?php
 
+    function dateCheck($today, $end) {
+    
+    $today_ts = strtotime($today);
+    
+    $end_ts = strtotime($end);
+    
+    $diff = $end_ts - $today_ts;
+    
+    if( $diff >= 0 )
+	return true;
+    else
+	return false;
+    }
+
+
     // Connecting to database
     $connect = mysql_connect("brinaleecom.ipagemysql.com", "brinakoko", "kingkoko");
     mysql_select_db("push_hiatus1", $connect);
@@ -231,70 +232,46 @@
     $endDay = "";
     $endYear = "";
     $message = "";
-
+    
+    
     while($row = mysql_fetch_array($result))
     {
+	echo "hello";
         $userId = $row['userid'];
-        $endMonth =  $row['month'];
-        $endDay =  $row['day'];
-        $endYear = $row['year'];
+	$endDate = "" . $row['year'] . "-" . $row['month'] . "-". $row['day'];
+	echo $endDate;
+	$todayDate = "" . $currentDate['year'] . "-" . $currentDate['mon'] . "-" . $currentDate['mday'];
         $message = $row['message'];
-        // Check the enable flag
-        if( $currentDate['year'] == $endYear )
+	
+        if( dateCheck( $todayDate, $endDate) )
         {
-            if( $currentDate['mon'] == $endMonth )
-	    {
-                if( $currentDate['mday'] <= $endDay )
-                {
-		    echo $userId;
-		    
-		    //getting a list of already replied
-	            $sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
-		    $result1 = mysql_query($sql1);
-		    $listOfAlreadyReplied = array();
-		    echo '<script type="text/javascript">';
-		    echo "var listOfAlreadyReplied = new Array();";		    
-		    while ($row = mysql_fetch_array($result1)) {
-			array_push($listOfAlreadyReplied, $row['friendid']);
-			//echo $row['friendid'];
-			$eachId = $row['friendid'];
-			
-			echo "listOfAlreadyReplied.push( $eachId );";
-		    }
-		    echo "</script>";
-		    
-		    //TODO: need to put back -1
-		    $currentDay = $currentDate['mday'];
-		    $currentMonth = $currentDate['mon'];
-		    echo "<script language=javascript>runEachUser(\"$userId\",\"$currentMonth\",\"$currentDay\",\"$message\");</script>";
-		}
-                else
-                {
-                    $sql="UPDATE Data SET enable='0' WHERE user=". $userId;
-                    mysql_query($sql);
-                }
-            }
-	    else if ($currentDate['month'] < $endMonth )
-	    {
-		echo "<script type=text/javascript>runEachUser(". $userId . ")</script>";
+	    echo $userId;
+	    
+	    //getting a list of already replied
+	    $sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
+	    $result1 = mysql_query($sql1);
+	    $listOfAlreadyReplied = array();
+	    echo '<script type="text/javascript">';
+	    echo "var listOfAlreadyReplied = new Array();";		    
+	    while ($row = mysql_fetch_array($result1)) {
+		array_push($listOfAlreadyReplied, $row['friendid']);
+		//echo $row['friendid'];
+		$eachId = $row['friendid'];
+		
+		echo "listOfAlreadyReplied.push( $eachId );";
 	    }
-            else
-            {
-                $sql="UPDATE Data SET enable='0' WHERE user=". $userId;
-                mysql_query($sql);
-            }
-        }
-	else if ( $currentDate['year'] < $endYear )
-	{
-	    //check updated-times
+	    echo "</script>";
+	    
+	    //TODO: need to put back -1
+	    $currentDay = $currentDate['mday'];
+	    $currentMonth = $currentDate['mon'];
+	    echo "<script language=javascript>runEachUser(\"$userId\",\"$currentMonth\",\"$currentDay\",\"$message\");</script>";
 	}
-        else
-        {
-            $sql="UPDATE Data SET enable='0' WHERE user=". $userId;
-            mysql_query($sql);
-        }
-        
-        // If enable flag is okay, check userid's messages
+	else
+	{
+	    $sql="UPDATE Data SET enable='0' WHERE userid=". $userId;
+	    mysql_query($sql);
+	}
         
     }
 			
