@@ -20,16 +20,12 @@
 			$reason = $_POST['reason'];
 			$day = $_POST['day'];
 			$month = $_POST['month'];
+			$month = $_POST['year'];
 			$message = $_POST['message'];
 			
-			if ($userid == null)
-			{
-				echo "null";
-			
-			}
 			echo "UserID:". $userid ."<br />";
 			echo "Reason:". $reason ."<br />";
-			echo "Date:". $day . $month ."<br />";
+			echo "Date:". $day . $month . $year . "<br />";
 			echo "Message:". $message ."<br />";
 			echo "Thank you for using PushHiatus!";
 			
@@ -41,15 +37,16 @@
 
 			mysql_select_db("push_hiatus1", $connect);
 
-			$sql="INSERT INTO Data (userid, reason, month, day, message, enable)
+			$sql="INSERT INTO Data (userid, reason, month, day, year, message, enable)
 			VALUES
-			('$_POST[userid]', '$_POST[reason]','$_POST[month]','$_POST[day]','$_POST[message]', '1')";
+			('$_POST[userid]', '$_POST[reason]','$_POST[month]','$_POST[day]','$_POST[year]','$_POST[message]', '1')";
 
 			if (!mysql_query($sql,$connect))
  			{
   				die('Error: ' . mysql_error());
   			}
-			echo "Thank you for using PushHiatus for all your auto-reply needs.";
+			
+			echo "\nThank you for using PushHiatus for all your auto-reply needs.";
 
 			mysql_close($connect);
 		

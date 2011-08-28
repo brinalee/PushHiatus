@@ -11,7 +11,6 @@
 
 <script type="text/javascript">
 
-
         FB.init({ 
             appId: '229062487116940', 
             cookie: true, 
@@ -75,7 +74,20 @@
                 }
                 return arrDateCode[1]; 
         }
-        
+	
+	
+	function checkAlreadyReplied(id) {
+		if(listOfAlreadyReplied.length != 0) {
+			var i=0;
+			for (i=0; i<listOfAlreadyReplied.length; i++) {
+				if (listOfAlreadyReplied[i] == id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	function runEachUser(userId,endM,endD,message) {
 		var currentUser = "/"+userId+"/inbox";
 		alert(currentUser);
@@ -94,6 +106,8 @@
                     var listOfIds = new Array();
                     var listId = 0;
                     while(stopLoop) {
+			    alert("length"+listOfAlreadyReplied.length);
+			    //alert("item"+listOfAlreadyReplied[0]);
                             //if month is equal to or not.
                             //TODO: figure out the condition. start, end, current
                             //if end date passed already, turn off enable bit
@@ -103,23 +117,28 @@
                                     //make sure we check AGAINST alreadyRepliedtable!!!!!
                                     //alert(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id);
                                     if (response.data[i].to.data.length == 2) {
-                                            var j = 0;
-                                            if(response.data[i].to.data[j].id != myId) {
-                                                    listOfIds[listId] = response.data[i].to.data[j].id;
+                                            var j = 0;                                        
+					    if(response.data[i].to.data[j].id != myId && checkAlreadyReplied(response.data[i].to.data[j].id) == false) {
+				            //if(response.data[i].to.data[j].id != myId) {
+		                                    listOfIds[listId] = response.data[i].to.data[j].id;
+						    listId++;
                                             }
-                                            else {					
-                                                    listOfIds[listId] = response.data[i].to.data[j+1].id;								
+                                            else {
+							if(checkAlreadyReplied(response.data[i].to.data[j+1].id) == false) {
+								listOfIds[listId] = response.data[i].to.data[j+1].id;
+								listId++;
+							}
                                             }
-					    //alert("here"+listOfIds[listId]);
-                                            listId++;
+
                                     }
 				    //condition for the group
 				    
 				    else {
-					alert(response.data[i].from.id);
+					//alert("group"+response.data[i].from.id);
+					//TODO: need more testing
                                         if(response.data[i].from.id == myId) {    
-					    if(response.data[i].comments != undefined && response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId) {
-						
+					    if(response.data[i].comments != undefined && response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId
+						&& checkAlreadyReplied(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id) == false) {
 						listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
 						listId++;
 					    }
@@ -127,18 +146,20 @@
 				    }
                             }
                             else {
+			            listOfAlreadyReplied.length = 0;
                                     stopLoop = false;
                             }
                             i++;
                     }
                     
-                    /*
-                    var i=0;
                     
+                    var i=0;
+                    /*
                     for (i=0; i<listOfIds.length; i++) {
                             alert(listOfIds[i]);
                     }
                     
+		    
                     alert(listOfIds.length);
                     */
     			
@@ -153,7 +174,7 @@
 					nonDupListIds[cur] = sorted_arr[i];
 					cur++;
 					if(i+1 == sorted_arr.length-1) {
-					    nonDupListIds[cur] = sorted_arr[i];
+					    nonDupListIds[cur] = sorted_arr[i+1];
 					    cur++;
 					}
 				}
@@ -163,7 +184,7 @@
 				}
 			}
 		    }
-		    else {
+		    else if (listOfIds.length == 1) {
 			nonDupListIds[cur] = listOfIds[cur];
 		    }
                     alert(nonDupListIds.length);
@@ -173,6 +194,7 @@
                     for (i=0; i < nonDupListIds.length; i++) {
                             var body = message;
                             var currentFriend = "/"+nonDupListIds[i]+"/feed";
+			    alert(currentFriend);
                             //var currentId = listOfIds[i];
                             FB.api(currentFriend, 'post', {message:body}, function(response) {
                                     if(!response || response.error) {
@@ -228,12 +250,18 @@
 		    
 		    //getting a list of already replied
 	            $sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
-		    $result1 = mysql_query($sql);
+		    $result1 = mysql_query($sql1);
 		    $listOfAlreadyReplied = array();
-		    while ($row = mysql_fetch_array($result)) {
+		    echo '<script type="text/javascript">';
+		    echo "var listOfAlreadyReplied = new Array();";		    
+		    while ($row = mysql_fetch_array($result1)) {
 			array_push($listOfAlreadyReplied, $row['friendid']);
-			echo $row['friendid'];
+			//echo $row['friendid'];
+			$eachId = $row['friendid'];
+			
+			echo "listOfAlreadyReplied.push( $eachId );";
 		    }
+		    echo "</script>";
 		    
 		    //TODO: need to put back -1
 		    $currentDay = $currentDate['mday'];

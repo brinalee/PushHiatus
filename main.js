@@ -1,76 +1,6 @@
-<!DOCTYPE html>
-<html xmlns:fb="http://www.facebook.com/2008/fbml">
-	<head>
-		<title>Push Hiatus</title>
-		<link rel="shortcut icon" href="images/favicon.ico" >
-		<link href="css/pushhiatus_layout.css" rel="stylesheet" type="text/css" />
-		<script type="text/javascript" src="javascript/main.js"></script>
-		<script src="https://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
-		<script type="text/javascript">
-		
 
 
-		
-			function alreadyCustomer(userId) {
-			    if (window.XMLHttpRequest)
-			    {// code for IE7+, Firefox, Chrome, Opera, Safari
-				    xmlhttp=new XMLHttpRequest();
-			    }
-			    else
-			    {// code for IE6, IE5
-				    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			    }
-			    
-			    xmlhttp.onreadystatechange=function()
-			    {
-					if (xmlhttp.readyState==4 && xmlhttp.status==200)
-					{
-						var reply = xmlhttp.responseText;
-			
-						alert(xmlhttp.responseText);
-						if(reply == 1)
-						{
-							var showDate = document.createElement('p');
-							showDate.innerHTML = "You already have PushHiatus running."
-							document.body.appendChild(showDate);
-						}
-						else
-						{
-							// Display form for a new customer
-							displayForm(userId);
-						}
-					}
-				}
-			    xmlhttp.open("GET","alreadyCustomer.php?userId="+userId,true);
-			    xmlhttp.send();
-			}
-		
-		    $(document).ready(function () {
-		
-				FB.init({ 
-					appId: '229062487116940', 
-					cookie: true, 
-					xfbml: true, 
-					status: true });
-					
-			
-				FB.getLoginStatus(function (response) {
-					if (response.session)
-					{
-						var uid = response.session.uid;
-						alert(uid);
-						alreadyCustomer(uid);
-					}
-					else
-					{
-						document.getElementById('hello').innerHTML = "<a href=\"https://www.facebook.com/dialog/oauth?client_id=229062487116940&redirect_uri=http://www.appybyte.com/pushhiatus&scope=read_mailbox,read_stream,publish_stream,offline_access&response_type=token&response_type=token\" target=\"_top\">Login with Facebook</a>";
-					}
-				});
-		
-		    });
-			
-function displayForm(userId)
+function displayForm()
 {
 	// H1
 	var phTitle = document.createElement('h1');
@@ -85,15 +15,13 @@ function displayForm(userId)
 	mainForm.setAttribute( "onsubmit", "return;");
 	document.body.appendChild(mainForm);
 	
-	
 	//User id
 	var idSelect = document.createElement('select');
 	idSelect.style.display="none";
 	idSelect.setAttribute("id","userid");
 	idSelect.setAttribute("name","userid");
 	var option6 = document.createElement('option');
-
-	option6.innerHTML = userId;
+	option6.innerHTML = uid;
 	idSelect.appendChild(option6);
 	mainForm.appendChild(idSelect);
 	
@@ -264,15 +192,3 @@ function displayForm(userId)
 	submitButton.setAttribute("value","Submit");
 	mainForm.appendChild(submitButton);
 }
-
-		</script> 	
-
-
-	</head>
-	<body>
-		
-<div id="fb-root"></div>
-<div id="hello"></div>
-	</body>
-
-</html>
