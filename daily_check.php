@@ -91,111 +91,94 @@
 		var currentUser = "/"+userId+"/inbox";
 		alert(currentUser);
 		FB.api(currentUser , function(response) {
-		    if( !response || response.error )
-		    {
-			alert("error");
-		    }
-		    //alert(response.data.length);
-                    var endMonth = endM;
-                    var endDay = endD;
-                    var myId = userId;
-                    var stopLoop = true;
-                    var i=0;
-                    
-                    var listOfIds = new Array();
-                    var listId = 0;
-                    while(stopLoop) {
-			    //alert("length"+listOfAlreadyReplied.length);
-			    //alert("item"+listOfAlreadyReplied[0]);
-                            //if end date passed already, turn off enable bit
-			    //alert(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth);
-                            if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
-                                    //alert(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id);
-                                    if (response.data[i].to.data.length == 2) {
-                                            var j = 0;                                        
-					    if(response.data[i].to.data[j].id != myId && checkAlreadyReplied(response.data[i].to.data[j].id) == false) {
-						listOfIds[listId] = response.data[i].to.data[j].id;
-						listId++;
-                                            }
-                                            else if(checkAlreadyReplied(response.data[i].to.data[j+1].id) == false) {
-						listOfIds[listId] = response.data[i].to.data[j+1].id;
-						listId++;
-                                            }
-                                    }
-				    else {
-					//alert("group"+response.data[i].from.id);
-					//TODO: need more testing
-                                        if(response.data[i].from.id == myId) {    
-					    if(response.data[i].comments != undefined && response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId
-						&& checkAlreadyReplied(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id) == false) {
-						listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
-						listId++;
-					    }
-                                        }					
-				    }
-                            }
-                            else {
-			            listOfAlreadyReplied.length = 0;
-                                    stopLoop = false;
-                            }
-                            i++;
-                    }
-                    
-                    /*
-                    var i=0;
-                    for (i=0; i<listOfIds.length; i++) {
-                            alert(listOfIds[i]);
-                    }    
-                    alert(listOfIds.length);
-                    */
-    			
-                    //filtering the duplicates if any
-                    var nonDupListIds = new Array();
-		    var cur=0;
-		    if (listOfIds.length > 1) {
-			var sorted_arr = listOfIds.sort();
+			if( !response || response.error )
+		        {
+				alert("error");
+			}
+			var endMonth = endM;
+			var endDay = endD;
+			var myId = userId;
+			var stopLoop = true;
 			var i=0;
-			for (i=0; i< sorted_arr.length-1; i++) {
-				if ((sorted_arr[i] != sorted_arr[i+1])) {
-					nonDupListIds[cur] = sorted_arr[i];
-					cur++;
-					if(i+1 == sorted_arr.length-1) {
-					    nonDupListIds[cur] = sorted_arr[i+1];
-					    cur++;
+			
+			var listOfIds = new Array();
+			var listId = 0;
+			while(stopLoop) {
+				if(getDay(response.data[i].updated_time) == endDay && getMonth(response.data[i].updated_time) == endMonth) {
+					if (response.data[i].to.data.length == 2) {
+						var j = 0;                                        
+						if(response.data[i].to.data[j].id != myId && checkAlreadyReplied(response.data[i].to.data[j].id) == false) {
+						    listOfIds[listId] = response.data[i].to.data[j].id;
+						    listId++;
+						}
+						else if(checkAlreadyReplied(response.data[i].to.data[j+1].id) == false) {
+						    listOfIds[listId] = response.data[i].to.data[j+1].id;
+						    listId++;
+						}
+					}
+					else if(response.data[i].from.id == myId) {    
+						if(response.data[i].comments != undefined && response.data[i].comments.data[response.data[i].comments.data.length-1].from.id != myId
+						    && checkAlreadyReplied(response.data[i].comments.data[response.data[i].comments.data.length-1].from.id) == false) {
+						    listOfIds[listId] = response.data[i].comments.data[response.data[i].comments.data.length-1].from.id;
+						    listId++;
+						}
+					}
+					else {
+						if (checkAlreadyReplied(response.data[i].from.id) == false) {
+							listOfIds[listId] = response.data[i].from.id;
+							listId++;						
+						}
+					}
+				    
+				}
+				else {
+					listOfAlreadyReplied.length = 0;
+					stopLoop = false;
+				}
+				i++;
+			}
+    			
+			//filtering the duplicates if any
+			var nonDupListIds = new Array();
+			var cur=0;
+			if (listOfIds.length > 1) {
+				var sorted_arr = listOfIds.sort();
+				var i=0;
+				for (i=0; i< sorted_arr.length-1; i++) {
+					if ((sorted_arr[i] != sorted_arr[i+1])) {
+						nonDupListIds[cur] = sorted_arr[i];
+						cur++;
+						if(i+1 == sorted_arr.length-1) {
+						    nonDupListIds[cur] = sorted_arr[i+1];
+						    cur++;
+						}
+					}
+					else if (sorted_arr[i] == sorted_arr[i+1] && i+1==sorted_arr.length-1) {
+						nonDupListIds[cur] = sorted_arr[i];
+						cur++;				
 					}
 				}
-				else if (sorted_arr[i] == sorted_arr[i+1] && i+1==sorted_arr.length-1) {
-				    nonDupListIds[cur] = sorted_arr[i];
-				    cur++;				
-				}
 			}
-		    }
-		    else if (listOfIds.length == 1) {
-			nonDupListIds[cur] = listOfIds[cur];
-		    }
-                    //alert(nonDupListIds.length);
-                    
-                    //posting to walls and saving into db
-                    var i=0;
-                    for (i=0; i < nonDupListIds.length; i++) {
-                            var body = message;
-                            var currentFriend = "/"+nonDupListIds[i]+"/feed";
-
-                            //var currentId = listOfIds[i];
-                            FB.api(currentFriend, 'post', {message:body}, function(response) {
-                                    if(!response || response.error) {
-                                            alert('Error occured');
-                                    }
-                            });
-                            insertIntoAlreadyRepliedTable(nonDupListIds[i],userId);
-                    }
+			else if (listOfIds.length == 1) {
+				nonDupListIds[cur] = listOfIds[cur];
+			}
+			
+			//posting to walls and saving into db
+			var i=0;
+			for (i=0; i < nonDupListIds.length; i++) {
+				var body = message;
+				var currentFriend = "/"+nonDupListIds[i]+"/feed";
+	    
+				FB.api(currentFriend, 'post', {message:body}, function(response) {
+					if(!response || response.error) {
+						alert('Error occured');
+					}
+				});
+				insertIntoAlreadyRepliedTable(nonDupListIds[i],userId);
+			}
 		});        
 	}
-	
-    </script>
-  
-  
-  
+</script>
   
     
 <?php
@@ -213,7 +196,6 @@
     else
 	return false;
     }
-
 
     // Connecting to database
     $connect = mysql_connect("brinaleecom.ipagemysql.com", "brinakoko", "kingkoko");
@@ -236,29 +218,26 @@
     
     while($row = mysql_fetch_array($result))
     {
-	echo "hello";
         $userId = $row['userid'];
-	$endDate = "" . $row['year'] . "-" . $row['month'] . "-". $row['day'];
-	echo $endDate;
-	$todayDate = "" . $currentDate['year'] . "-" . $currentDate['mon'] . "-" . $currentDate['mday'];
+		$endDate = "" . $row['year'] . "-" . $row['month'] . "-". $row['day'];
+		$todayDate = "" . $currentDate['year'] . "-" . $currentDate['mon'] . "-" . $currentDate['mday'];
         $message = $row['message'];
 	
         if( dateCheck( $todayDate, $endDate) )
         {
-	    echo $userId;
 	    
-	    //getting a list of already replied
-	    $sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
-	    $result1 = mysql_query($sql1);
-	    $listOfAlreadyReplied = array();
-	    echo '<script type="text/javascript">';
-	    echo "var listOfAlreadyReplied = new Array();";		    
-	    while ($row = mysql_fetch_array($result1)) {
-		array_push($listOfAlreadyReplied, $row['friendid']);
-		//echo $row['friendid'];
-		$eachId = $row['friendid'];
-		
-		echo "listOfAlreadyReplied.push( $eachId );";
+			//getting a list of already replied
+			$sql1 = "SELECT friendid from AlreadyReplied where userId=".$userId;
+			$result1 = mysql_query($sql1);
+			$listOfAlreadyReplied = array();
+			echo '<script type="text/javascript">';
+			echo "var listOfAlreadyReplied = new Array();";		    
+			while ($row = mysql_fetch_array($result1)) {
+			array_push($listOfAlreadyReplied, $row['friendid']);
+			//echo $row['friendid'];
+			$eachId = $row['friendid'];
+			
+			echo "listOfAlreadyReplied.push( $eachId );";
 	    }
 	    echo "</script>";
 	    
@@ -269,8 +248,10 @@
 	}
 	else
 	{
-	    $sql="UPDATE Data SET enable='0' WHERE userid=". $userId;
+		$sql = "DELETE FROM Data WHERE userid=". $userId;
 	    mysql_query($sql);
+	    $sqlARDelete = "DELETE FROM AlreadyReplied WHERE userid=". $userId;
+	    mysql_query($sqlARDelete);
 	}
         
     }
